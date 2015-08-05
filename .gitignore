@@ -1,0 +1,22 @@
+# Collected statics
+static
+
+# Coverage tool
+.coverage
+
+# Python
+*.pyc
+local_settings.py
+
+# SQLite3 db
+*.db
+*.sqlite
+*.sqlite3
+
+# Mac
+.DS_Store
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini

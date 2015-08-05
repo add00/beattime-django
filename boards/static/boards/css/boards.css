@@ -1,0 +1,137 @@
+body {
+    padding-top: 70px;
+}
+
+p {
+    font-size: 1em;
+}
+
+.labels {
+    position: fixed;
+    right: 0;
+    left: 0;
+    top: 50px;
+    height: 10px;
+    margin-bottom: 10px;
+}
+
+.bg-todo {
+    color: #fff;
+    background-color: #4A70A0;
+}
+
+.bg-inprogress {
+    color: #fff;
+    background-color: #337ab7;
+}
+
+.bg-inreview {
+    color: #fff;
+    background-color: #ff5b3e;
+}
+
+.bg-done {
+    color: #fff;
+    background-color: #5cb85c;
+}
+
+.bg-blocked {
+    color: #fff;
+    background-color: #d9534f;
+}
+
+.labels p {
+    text-align: center;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin: 0;
+    padding: 2px 0;
+}
+
+.border {
+    border: 1px solid #eee;
+    border-radius: 14px;
+}
+
+.border-radius {
+    border-radius: 14px;
+}
+
+.sticker {
+    padding: 10px 0;
+    position: relative;
+}
+
+.sticker-header {
+    border-bottom: 1px solid #fff;
+    padding: 0 15px;
+}
+
+.sticker-content {
+    border-bottom: 1px solid #fff;
+    padding: 5px 15px;
+}
+
+.sticker-description {
+}
+
+.sticker-actions {
+    text-align: right;
+    padding: 5px 15px;
+}
+
+.sticker-label {
+    position: absolute;
+    top: 18px;
+    right: 15px;
+}
+
+.avatar {
+    border-radius: 50%;
+    height: 300px;
+    margin: 0 auto;
+    overflow: hidden;
+    width: 300px;
+}
+
+.avatar img {
+    -webkit-transform: translate(-50%);
+    height: 100%;
+    margin-left: 100px;
+}
+
+.circle {
+    border-radius: 80%;
+    background: #337ab7;
+    height: auto;
+    margin: 0 auto;
+    padding-top: 50%;
+    width: 50%;
+}
+
+/* OVERRIDDEN BOOTSTRAP CLASSES */
+blockquote {
+    font-style: italic;
+    border-left: none;
+    color: #777;
+}
+
+blockquote::before{
+    content: "\"";
+}
+
+blockquote::after{
+    content: "\"";
+}
+
+.jumbotron {
+    text-align: center;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.placeholder h4 {
+    padding-bottom: 10px;
+}
+

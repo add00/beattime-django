@@ -1,0 +1,221 @@
+{% extends "boards/base.html" %}
+
+{% block nav %}
+    {{ block.super }}
+    <div class="labels container-fluid">
+        <div id="nav-todo" class="row">
+            <div class="bg-todo col-xs-6 col-sm-3">
+                <p>TO DO</p>
+            </div>
+            <div id="nav-inprogress" class="bg-inprogress col-xs-6 col-sm-3">
+                <p>IN PROGRESS</p>
+            </div>
+            <div id="nav-inreview" class="bg-inreview col-xs-6 col-sm-3">
+                <p>IN REVIEW</p>
+            </div>
+            <div id="nav-done" class="bg-done col-xs-6 col-sm-3">
+                <p>DONE</p>
+            </div>
+        </div>
+    </div>
+{% endblock nav %}
+
+{% block container %}
+{{object_list}}
+    <div class="row">
+        <div id="todo" class="col-xs-6 col-sm-3">
+            <div class="sticker">
+                <div class="border bg-todo">
+                    <div class="sticker-header">
+                        <h5>Hello sticker</h5>
+                        <div class="sticker-label">
+                            <span class="label label-success">OPEN</span>
+                        </div>
+                    </div>
+                    <div class="sticker-content">
+                        <div class="sticker-description">
+                            <p>
+                                Sed non risus turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut porta massa, a blandit risus. Ut mattis eros ex, sit amet posuere libero dapibus in.
+                            </p>
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <div class="sticker-actions">
+                        <div>
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 1
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sticker">
+                <div class="border bg-todo">
+                    <div class="sticker-header">
+                        <h5>Hello sticker</h5>
+                        <div class="sticker-label">
+                            <span class="label label-success">OPEN</span>
+                        </div>
+                    </div>
+                    <div class="sticker-content">
+                        <div class="sticker-description">
+                            <p>
+                                Sed non risus turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut porta massa, a blandit risus. Ut mattis eros ex, sit amet posuere libero dapibus in. In hac habitasse platea dictumst. Maecenas in tincidunt arcu, ac feugiat nulla. Proin nec blandit turpis, et eleifend odio.
+                            </p>
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <div class="sticker-actions">
+                        <div>
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 1
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="inprogress" class="col-xs-6 col-sm-3">
+            <div class="sticker">
+                <div class="border bg-inprogress">
+                    <div class="sticker-header">
+                        <h5>Hello sticker</h5>
+                        <div class="sticker-label">
+                            <span class="label label-info">IN PROGRESS</span>
+                        </div>
+                    </div>
+                    <div class="sticker-content">
+                        <div class="sticker-description">
+                            <p>
+                                Maecenas in tincidunt arcu, ac feugiat nulla. Proin nec blandit turpis, et eleifend odio.
+                            </p>
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <div class="sticker-actions">
+                        <div>
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 1
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sticker">
+                <div class="border bg-inprogress">
+                    <div class="sticker-header">
+                        <h5>Hello sticker</h5>
+                        <div class="sticker-label">
+                            <span class="label label-info">IN PROGRESS</span>
+                        </div>
+                    </div>
+                    <div class="sticker-content">
+                        <div class="sticker-description">
+                            <p>
+                                Sed non risus turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut porta massa, a blandit risus. Ut mattis eros ex, sit amet posuere libero dapibus in. In hac habitasse platea dictumst. Maecenas in tincidunt arcu, ac feugiat nulla. Proin nec blandit turpis, et eleifend odio.
+                            </p>
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <div class="sticker-actions">
+                        <div>
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 1
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="inreview" class="col-xs-6 col-sm-3">
+            <div class="sticker">
+                <div class="border bg-inreview">
+                    <div class="sticker-header">
+                        <h5>Hello sticker</h5>
+                        <div class="sticker-label">
+                            <span class="label label-warning">IN REVIEW</span>
+                        </div>
+                    </div>
+                    <div class="sticker-content">
+                        <div class="sticker-description">
+                            <p>
+                                Sed non risus turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut porta massa, a blandit risus. Ut mattis eros ex, sit amet posuere libero dapibus in. In hac habitasse platea dictumst. Maecenas in tincidunt arcu, ac feugiat nulla. Proin nec blandit turpis, et eleifend odio.
+                            </p>
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <div class="sticker-actions">
+                        <div>
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 1
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sticker">
+                <div class="border bg-inreview">
+                    <div class="sticker-header">
+                        <h5>Hello sticker</h5>
+                        <div class="sticker-label">
+                            <span class="label label-warning">IN REVIEW</span>
+                        </div>
+                    </div>
+                    <div class="sticker-content">
+                        <div class="sticker-description">
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut porta massa, a blandit risus. Ut mattis eros ex, sit amet posuere libero dapibus in.
+                            </p>
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <div class="sticker-actions">
+                        <div>
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 1
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="done" class="col-xs-6 col-sm-3">
+            <div class="sticker">
+                <div class="border bg-done">
+                    <div class="sticker-header">
+                        <h5>Hello sticker</h5>
+                        <div class="sticker-label">
+                            <span class="label label-danger">DONE</span>
+                        </div>
+                    </div>
+                    <div class="sticker-content">
+                        <div class="sticker-description">
+                            <p>
+                                Suspendisse ut porta massa, a blandit risus.
+                            </p>
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <div class="sticker-actions">
+                        <div>
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 1
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sticker">
+                <div class="border bg-done">
+                    <div class="sticker-header">
+                        <h5>Hello sticker</h5>
+                        <div class="sticker-label">
+                            <span class="label label-danger">DONE</span>
+                        </div>
+                    </div>
+                    <div class="sticker-content">
+                        <div class="sticker-description">
+                            <p>
+                                Sed non risus turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut porta massa, a blandit risus. Ut mattis eros ex, sit amet posuere libero dapibus in. In hac habitasse platea dictumst. Maecenas in tincidunt arcu, ac feugiat nulla. Proin nec blandit turpis, et eleifend odio.
+                            </p>
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <div class="sticker-actions">
+                        <div>
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 1
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Add the extra clearfix for only the required viewport -->
+        <div class="clearfix visible-xs-block"></div>
+    </div>
+{% endblock container %}
