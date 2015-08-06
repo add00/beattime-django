@@ -12,8 +12,18 @@ class Profile(models.Model):
     """
     display_name = models.CharField(_('display_name'), max_length=100)
     # @desc: self and a ManyToMany relation.
-    friends = models.ManyToManyField('self', verbose_name=_('friends'))
-    user = models.ForeignKey(User, verbose_name=_('user'))
+    friends = models.ManyToManyField(
+        'self', blank=True, verbose_name=_('friends')
+    )
+    user = models.OneToOneField(User, verbose_name=_('user'))
+
+    def save(self, *args, **kwargs):
+        """
+        Initialize `display_name` when its empty.
+        """
+        if not self.display_name and self.user.username:
+            self.display_name = self.user.username
+        super(Profile, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.display_name

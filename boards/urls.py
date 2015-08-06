@@ -9,12 +9,12 @@ urlpatterns = patterns(
     '',
     url(
         r'^$',
-        views.BoardsProfileView.as_view(),
+        views.ProfileView.as_view(),
         name='boards-profile'
     ),
     url(
-        r'^dashboard$',
-        views.BoardsBoardView.as_view(),
+        r'^dashboard/(?P<username>[a-z0-9_-]+)/(?P<board_sequence>[0-9]+)$',
+        views.BoardView.as_view(),
         name='boards-board'
     ),
 )
