@@ -32,8 +32,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('display_name', models.CharField(max_length=100, verbose_name='display_name')),
-                ('friends', models.ManyToManyField(related_name='friends_rel_+', verbose_name='friends', to='profiles.Profile')),
-                ('user', models.ForeignKey(verbose_name='user', to=settings.AUTH_USER_MODEL)),
+                ('friends', models.ManyToManyField(related_name='friends_rel_+', verbose_name='friends', to='profiles.Profile', blank=True)),
+                ('user', models.OneToOneField(verbose_name='user', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(

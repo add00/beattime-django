@@ -1,29 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
-from boards import TASK_STATUS, DONE
+from boards import TASK_STATUS
 from boards.fields.models import RGBField
+from boards.managers import CommentAuthorsManager, StickersManager
 
 
 COMMENT_LOCATION_LIMIT = (
     models.Q(app_label='boards', model='sticker') |
     models.Q(app_label='boards', model='board')
 )
-
-
-class DoneStickersManager(models.Manager):
-    """
-    Custom manager executes the most common filtering by finished tasks.
-    """
-    def get_queryset(self):
-        return super(DoneStickersManager, self).get_queryset().filter(
-            status=DONE[0]
-        )
 
 
 class ConfigurableMixin(models.Model):
@@ -38,7 +30,7 @@ class ConfigurableMixin(models.Model):
         Returns stickers for given `Board` or `Desk`.
         """
         if isinstance(self, Board):
-            return self.author.sticker_set.all()
+            return self.boards.sticker_set.all()
         return self.owner.sticker_set.all()
 
     class Meta:
@@ -61,12 +53,6 @@ class CommonInfo(models.Model):
         _('creation_date'), auto_now=True, editable=False
     )
 
-    def save(self, *args, **kwargs):
-        if self.name == "Yoko Ono's blog":
-            return # Yoko shall never have her own blog!
-        else:
-            super(Blog, self).save(*args, **kwargs) # Call
-
     class Meta:
         abstract = True
 
@@ -83,6 +69,9 @@ class Comment(CommonInfo):
     )
     object_id = models.PositiveIntegerField()
 
+    objects = models.Manager()
+    authors_objects = CommentAuthorsManager()
+
     def __unicode__(self):
         return '@{} [{}]'.format(self.author, self.creation_date)
 
@@ -92,7 +81,7 @@ class Label(models.Model):
     Represents status of task for particular `Sticker` object.
     """
     # @desc: custom field.
-    color = RGBField(_('display_name'))
+    color = RGBField(_('color'))
     name = models.CharField(_('name'), max_length=100)
 
     def __unicode__(self):
@@ -124,16 +113,22 @@ class Board(ConfigurableMixin, CommonInfo):
     """
     desk = models.ForeignKey(Desk, verbose_name=_('desk'))
     title = models.CharField(_('title'), max_length=100)
+    sequence = models.PositiveIntegerField()
 
     def __unicode__(self):
         return '{} [{}]'.format(self.title, self.desk)
 
     @property
-    def owner(self):
+    def owner_username(self):
         """
-        Returns owner of board.
+        Return owner's username of board, so owner of desk that this board
+        is assigned to (not author of board).
         """
-        return self.author
+        return self.desk.owner.user.username
+
+    class Meta:
+        # @desc: unique constrains.
+        unique_together = (('desk', 'sequence'),)
 
 
 class Sticker(CommonInfo):
@@ -148,8 +143,17 @@ class Sticker(CommonInfo):
     # @desc: choices field.
     status = models.CharField(_('status'), choices=TASK_STATUS, max_length=1)
 
-    done_objects = DoneStickersManager()
-    objects = models.Manager()
+    objects = StickersManager()
+
+    @property
+    def count_comments(self):
+        """
+        Return number of comment of a sticker.
+        """
+        content_type = ContentType.objects.get_for_model(self)
+        return Comment.objects.filter(
+            content_type=content_type, object_id=self.pk
+        ).count()
 
     def __unicode__(self):
         return '{} [{}]'.format(self.caption, self.label.name)

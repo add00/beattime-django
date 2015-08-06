@@ -8,8 +8,8 @@ import boards.fields.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('profiles', '0001_initial'),
         ('contenttypes', '0002_remove_content_type_name'),
+        ('profiles', '0001_initial'),
     ]
 
     operations = [
@@ -20,11 +20,9 @@ class Migration(migrations.Migration):
                 ('creation_date', models.DateTimeField(auto_now_add=True, verbose_name='creation_date')),
                 ('modification_date', models.DateTimeField(auto_now=True, verbose_name='creation_date')),
                 ('title', models.CharField(max_length=100, verbose_name='title')),
+                ('sequence', models.PositiveIntegerField()),
                 ('author', models.ForeignKey(verbose_name='author', to='profiles.Profile')),
             ],
-            options={
-                'abstract': False,
-            },
         ),
         migrations.CreateModel(
             name='Comment',
@@ -55,7 +53,7 @@ class Migration(migrations.Migration):
             name='Label',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('color', boards.fields.models.RGBField(verbose_name='display_name')),
+                ('color', boards.fields.models.RGBField(verbose_name='color')),
                 ('name', models.CharField(max_length=100, verbose_name='name')),
             ],
         ),
@@ -67,7 +65,7 @@ class Migration(migrations.Migration):
                 ('modification_date', models.DateTimeField(auto_now=True, verbose_name='creation_date')),
                 ('caption', models.CharField(max_length=100, verbose_name='caption')),
                 ('description', models.TextField(verbose_name='description')),
-                ('status', models.CharField(max_length=1, verbose_name='status', choices=[('D', 'DONE'), ('I', 'IN PROGRESS'), ('R', 'REVIEW'), ('B', 'BLOCKED')])),
+                ('status', models.CharField(max_length=1, verbose_name='status', choices=[('O', 'OPEN'), ('I', 'IN PROGRESS'), ('R', 'REVIEW'), ('D', 'DONE'), ('B', 'BLOCKED')])),
                 ('author', models.ForeignKey(verbose_name='author', to='profiles.Profile')),
                 ('board', models.ForeignKey(verbose_name='board', to='boards.Board')),
                 ('label', models.ForeignKey(verbose_name='label', to='boards.Label')),
@@ -80,5 +78,9 @@ class Migration(migrations.Migration):
             model_name='board',
             name='desk',
             field=models.ForeignKey(verbose_name='desk', to='boards.Desk'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='board',
+            unique_together=set([('desk', 'sequence')]),
         ),
     ]
