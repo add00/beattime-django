@@ -21,6 +21,10 @@ p {
     background-color: #4A70A0;
 }
 
+.bg-sticker-top {
+    height: 5px;
+}
+
 .bg-inprogress {
     color: #fff;
     background-color: #337ab7;
@@ -39,6 +43,16 @@ p {
 .bg-blocked {
     color: #fff;
     background-color: #d9534f;
+}
+
+.bg-number {
+    color: #777;
+    background-color: #fff;
+}
+
+.bg-number.preview {
+    color: #fff;
+    background-color: #777;
 }
 
 .labels p {
@@ -63,14 +77,38 @@ p {
     position: relative;
 }
 
+.sticker.preview {
+    padding: 0;
+}
+
+.sticker.preview form {
+    margin-bottom: 30px;
+    padding: 15px;
+}
+
 .sticker-header {
     border-bottom: 1px solid #fff;
     padding: 0 15px;
 }
 
+.sticker-header.preview {
+    border-bottom: 1px solid #eee;
+    padding-right: 115px;
+}
+
 .sticker-content {
     border-bottom: 1px solid #fff;
     padding: 5px 15px;
+}
+
+.sticker-content.preview {
+    border-bottom: 1px solid #eee;
+}
+
+.sticker-content.preview p {
+    padding: 10px 0;
+    font-size: 1.4em;
+    word-wrap: break-word;
 }
 
 .sticker-empty {
@@ -87,14 +125,44 @@ p {
     font-size: 0.9em;
 }
 
+.sticker-actions.preview {
+    padding-bottom: 20px;
+    text-align: left;
+}
+
 .sticker-actions .glyphicon {
     top: 2px;
+}
+
+.author {
+    text-align: right;
+    margin-bottom: 0;
 }
 
 .sticker-label {
     position: absolute;
     top: 18px;
     right: 15px;
+}
+
+.sticker-label.preview {
+    margin-right: 15px;
+    font-size: 150%;
+}
+
+.sticker-number {
+    float: left;
+    margin-top: 2px;
+}
+
+.sticker-actions .sticker-number:hover {
+    background-color: #e6e6e6;
+    border-color: #adadad;
+    color: #777 !important;
+}
+
+.sticker-number.preview {
+    float: none;
 }
 
 .avatar {
@@ -141,6 +209,33 @@ p {
     padding-bottom: 10px;
 }
 
+.nav-action {
+    color: #fff;
+    font-size: 0.8em;
+    font-weight: bold;
+    position: absolute;
+    right: 7px;
+    top: 3px;
+}
+
+.nav-action:hover {
+    color: #777;
+    background-color: #fff;
+    border-radius: .25em;
+    position: absolute;
+    padding: 0.07em 0.15em 0.07em;
+    right: 5px;
+}
+
+footer {
+   bottom: 0px;
+   height: 60px;
+   left: 0px;
+   padding-top: 10px;
+   position: fixed;
+   width: 100%;
+}
+
 /* OVERRIDDEN BOOTSTRAP CLASSES */
 blockquote {
     font-style: italic;
@@ -167,3 +262,6 @@ blockquote::after{
     padding-bottom: 10px;
 }
 
+.well {
+    margin-bottom: 0;
+}

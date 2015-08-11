@@ -82,6 +82,7 @@ class Label(models.Model):
     """
     # @desc: custom field.
     color = RGBField(_('color'))
+    css_class = models.CharField(_('css_class'), max_length=100)
     name = models.CharField(_('name'), max_length=100)
 
     def __unicode__(self):
@@ -113,7 +114,11 @@ class Board(ConfigurableMixin, CommonInfo):
     """
     desk = models.ForeignKey(Desk, verbose_name=_('desk'))
     title = models.CharField(_('title'), max_length=100)
-    sequence = models.PositiveIntegerField()
+    sequence = models.PositiveIntegerField(_('sequence'))
+    prefix = models.SlugField(_('prefix'), max_length=5)
+    sticker_sequence = models.PositiveIntegerField(
+        _('sticker_sequence'), default=1
+    )
 
     def __unicode__(self):
         return '{} [{}]'.format(self.title, self.desk)
@@ -126,9 +131,17 @@ class Board(ConfigurableMixin, CommonInfo):
         """
         return self.desk.owner.user.username
 
+    def save(self, *args, **kwargs):
+        """
+        Populate prefix if has not been provided.
+        """
+        if not self.prefix:
+            self.prefix = self.desk.desk_slug
+        super(Board, self).save(*args, **kwargs)
+
     class Meta:
         # @desc: unique constrains.
-        unique_together = (('desk', 'sequence'),)
+        unique_together = ('desk', 'sequence')
 
 
 class Sticker(CommonInfo):
@@ -140,10 +153,16 @@ class Sticker(CommonInfo):
     # @desc: long text field.
     description = models.TextField(_('description'))
     label = models.ForeignKey(Label, verbose_name=_('label'))
+    sequence = models.PositiveIntegerField(_('sequence'))
     # @desc: choices field.
     status = models.CharField(_('status'), choices=TASK_STATUS, max_length=1)
 
     objects = StickersManager()
+
+    def __unicode__(self):
+        return '#{}-{} {} [{}]'.format(
+            self.board.prefix, self.sequence, self.caption, self.label.name
+        )
 
     @property
     def count_comments(self):
@@ -155,5 +174,24 @@ class Sticker(CommonInfo):
             content_type=content_type, object_id=self.pk
         ).count()
 
-    def __unicode__(self):
-        return '{} [{}]'.format(self.caption, self.label.name)
+    @property
+    def number(self):
+        """
+        Return number of ticket
+        """
+        return '{}-{}'.format(self.board.prefix, self.sequence)
+
+    def save(self, *args, **kwargs):
+        """
+        Populate and update sequence.
+        """
+        if not self.pk:
+            sequence = self.board.sticker_sequence
+            self.sequence = sequence
+            self.board.sticker_sequence = sequence + 1
+            self.board.save()
+        super(Sticker, self).save(*args, **kwargs)
+
+    class Meta:
+        # @desc: unique constrains.
+        unique_together = ('board', 'sequence')

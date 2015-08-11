@@ -6,6 +6,6 @@ from django.contrib import admin
 
 urlpatterns = patterns(
     '',
-    url(r'^', include('boards.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('boards.urls')),
 )

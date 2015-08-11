@@ -1,6 +1,6 @@
 from django.db.models import Count, Manager, QuerySet
 
-from boards import OPEN, IN_PROGRESS, REVIEW, DONE, BLOCKED
+from boards import OPEN, IN_PROGRESS, IN_REVIEW, DONE, BLOCKED
 
 
 class CommentAuthorsManager(Manager):
@@ -26,7 +26,7 @@ class StickersQuerySet(QuerySet):
         return self.filter(status=IN_PROGRESS[0])
 
     def review(self):
-        return self.filter(status=REVIEW[0])
+        return self.filter(status=IN_REVIEW[0])
 
     def done(self):
         return self.filter(status=DONE[0])

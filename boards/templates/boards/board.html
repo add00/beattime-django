@@ -3,9 +3,14 @@
 {% block nav %}
     {{ block.super }}
     <div class="labels container-fluid">
-        <div id="nav-todo" class="row">
-            <div class="bg-todo col-xs-6 col-sm-3">
+        <div class="row">
+            <div id="nav-todo" class="bg-todo col-xs-6 col-sm-3">
                 <p>TO DO</p>
+                {% if short_urls_allowed %}
+                    <a class="nav-action glyphicon glyphicon-plus" href="{% url 'boards-sticker-create' board_sequence %}"></a>
+                {% else %}
+                    <a class="nav-action glyphicon glyphicon-plus" href="{% url 'boards-sticker-create' username board_sequence %}"></a>
+                {% endif %}
             </div>
             <div id="nav-inprogress" class="bg-inprogress col-xs-6 col-sm-3">
                 <p>IN PROGRESS</p>
@@ -28,7 +33,9 @@
                     <div class="sticker">
                         <div class="border bg-todo">
                             <div class="sticker-header">
-                                <h5>{{ sticker.caption }}</h5>
+                                <h5>
+                                    {{ sticker.caption }}
+                                </h5>
                                 <div class="sticker-label">
                                     <span class="label label-success">OPEN</span>
                                 </div>
@@ -43,6 +50,11 @@
                             </div>
                             <div class="sticker-actions">
                                 <div>
+                                    {% if short_urls_allowed %}
+                                        <a class="sticker-number label bg-number" href="{% url 'boards-sticker-detail' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                    {% else %}
+                                        <a class="sticker-number label bg-number" href="{% url 'boards-sticker-detail' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                    {% endif %}
                                     {% if sticker.count_comments %}
                                         <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ sticker.count_comments }}
                                     {% else %}
@@ -84,6 +96,11 @@
                             </div>
                             <div class="sticker-actions">
                                 <div>
+                                    {% if short_urls_allowed %}
+                                        <a class="sticker-number label bg-number" href="{% url 'boards-sticker-detail' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                    {% else %}
+                                        <a class="sticker-number label bg-number" href="{% url 'boards-sticker-detail' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                    {% endif %}
                                     {% if sticker.count_comments %}
                                         <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ sticker.count_comments }}
                                     {% else %}
@@ -125,6 +142,11 @@
                             </div>
                             <div class="sticker-actions">
                                 <div>
+                                    {% if short_urls_allowed %}
+                                        <a class="sticker-number label bg-number" href="{% url 'boards-sticker-detail' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                    {% else %}
+                                        <a class="sticker-number label bg-number" href="{% url 'boards-sticker-detail' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                    {% endif %}
                                     {% if sticker.count_comments %}
                                         <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ sticker.count_comments }}
                                     {% else %}
@@ -166,6 +188,11 @@
                             </div>
                             <div class="sticker-actions">
                                 <div>
+                                    {% if short_urls_allowed %}
+                                        <a class="sticker-number label bg-number" href="{% url 'boards-sticker-detail' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                    {% else %}
+                                        <a class="sticker-number label bg-number" href="{% url 'boards-sticker-detail' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                    {% endif %}
                                     {% if sticker.count_comments %}
                                         <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ sticker.count_comments }}
                                     {% else %}
@@ -186,7 +213,5 @@
                 </div>
             {% endif %}
         </div>
-        <!-- Add the extra clearfix for only the required viewport -->
-        <div class="clearfix visible-xs-block"></div>
     </div>
 {% endblock container %}
