@@ -1,0 +1,35 @@
+{% extends 'boards/base.html' %}
+{% load bootstrap %}
+
+{% block container %}
+<div class="row">
+    <div class="col-xs-6 col-sm-4">
+        {% if form %}
+            <form action="?" role="form" method="post">
+                <div class="form-group">
+                    {% csrf_token %}
+                    <h4>User data</h4>
+                    {{ form|bootstrap }}
+                    <button type="submit" class="pull-right btn btn-primary">Submit</button>
+                    <!-- <input class="btn btn-success" type="submit" value="Zatwierdź" name="_add" /> -->
+                </div>
+            </form>
+        {% else %}
+            <ul>
+                <li>
+                    <label class="control-label  " for="id_caption">Caption</label>
+                    {{ sticker.caption }}
+                </li>
+                <li>
+                    <label class="control-label  " for="id_caption">Description</label>
+                    {{ sticker.description }}
+                </li>
+                <li>
+                    <label class="control-label  " for="id_caption">Label</label>
+                    {{ sticker.label }}
+                </li>
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock container %}
