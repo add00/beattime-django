@@ -38,25 +38,4 @@ urlpatterns = patterns(
         views.StickerUpdate.as_view(),
         name='boards-sticker-update'
     ),
-    # url(
-    #     r'^dashboard/(?P<username>([a-z0-9_-]|(my))+)/(?P<board_sequence>[0-9]+)/?$',
-    #     views.BoardView.as_view(),
-    #     name='boards-board'
-    # ),
-    # url(
-    #     (
-    #         r'^dashboard/(?P<username>[a-z0-9_-]+)/(?P<board_sequence>[0-9]+)/'
-    #         r'new$'
-    #     ),
-    #     views.StickerCreate.as_view(),
-    #     name='boards-sticker-create'
-    # ),
-    # url(
-    #     (
-    #         r'^dashboard/(?P<username>[a-z0-9_-]+)/(?P<board_sequence>[0-9]+)/'
-    #         r'update/(?P<prefix>[-a-zA-Z0-9_]{1,5})-(?P<sequence>[0-9]+)$'
-    #     ),
-    #     views.StickerUpdate.as_view(),
-    #     name='boards-sticker-update'
-    # ),
 )
