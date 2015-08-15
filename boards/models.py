@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -18,9 +17,9 @@ COMMENT_LOCATION_LIMIT = (
 )
 
 
-class ConfigurableMixin(models.Model):
+class DeskBoardMixin(models.Model):
     """
-    Common methods and attributes.
+    Common methods and attributes od Desk and Board models.
     @desc: model mixin.
     """
     # @desc: example of property.
@@ -32,6 +31,26 @@ class ConfigurableMixin(models.Model):
         if isinstance(self, Board):
             return self.boards.sticker_set.all()
         return self.owner.sticker_set.all()
+
+    class Meta:
+        abstract = True
+
+
+class BoardStickerMixin(models.Model):
+    """
+    Common methods and attributes of Board and Sticker models.
+    @desc: model mixin.
+    """
+    # @desc: example of property.
+    @property
+    def count_comments(self):
+        """
+        Return number of comment of a sticker.
+        """
+        content_type = ContentType.objects.get_for_model(self)
+        return Comment.objects.filter(
+            content_type=content_type, object_id=self.pk
+        ).count()
 
     class Meta:
         abstract = True
@@ -63,6 +82,7 @@ class Comment(CommonInfo):
     all comments.
     """
     # @desc: generic relation.
+    text = models.TextField(_('text'))
     content_object = GenericForeignKey('content_type', 'object_id')
     content_type = models.ForeignKey(
         ContentType, limit_choices_to=COMMENT_LOCATION_LIMIT
@@ -89,7 +109,7 @@ class Label(models.Model):
         return '{} [{}]'.format(self.name, self.color)
 
 
-class Desk(ConfigurableMixin, models.Model):
+class Desk(DeskBoardMixin, models.Model):
     """
     Boards container model.
     """
@@ -108,7 +128,7 @@ class Desk(ConfigurableMixin, models.Model):
         return self.owner.board_set.all()
 
 
-class Board(ConfigurableMixin, CommonInfo):
+class Board(BoardStickerMixin, DeskBoardMixin, CommonInfo):
     """
     Stickers container model.
     """
@@ -144,7 +164,7 @@ class Board(ConfigurableMixin, CommonInfo):
         unique_together = ('desk', 'sequence')
 
 
-class Sticker(CommonInfo):
+class Sticker(BoardStickerMixin, CommonInfo):
     """
     Sticker with task description.
     """
@@ -163,16 +183,6 @@ class Sticker(CommonInfo):
         return '#{}-{} {} [{}]'.format(
             self.board.prefix, self.sequence, self.caption, self.label.name
         )
-
-    @property
-    def count_comments(self):
-        """
-        Return number of comment of a sticker.
-        """
-        content_type = ContentType.objects.get_for_model(self)
-        return Comment.objects.filter(
-            content_type=content_type, object_id=self.pk
-        ).count()
 
     @property
     def number(self):

@@ -15,20 +15,22 @@
     <div class="col-md-6 sticker preview">
         <div class="border">
             {% if form %}
-                <form id="sticker-form" action="?" role="form" method="post">
-                    <div class="form-group">
-                        {% csrf_token %}
-                        <h4>User data</h4> {{ form|bootstrap }}
-                    </div>
-                </form>
+                <div class="sticker-content">
+                    <form id="sticker-form" action="?" role="form" method="post">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <h4>User data</h4> {{ form|bootstrap }}
+                        </div>
+                    </form>
+                </div>
             {% else %}
                 <div class="sticker-header preview">
                     <h2>{{ sticker.caption }}</h2>
                     <div class="sticker-label preview">
                         {% if short_urls_allowed %}
-                            <a class="sticker-number label bg-number preview" href="{% url 'boards-sticker-update' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                            <a class="sticker-number label bg-number preview" href="{% url 'boards:sticker-update' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
                         {% else %}
-                            <a class="sticker-number label bg-number preview" href="{% url 'boards-sticker-update' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                            <a class="sticker-number label bg-number preview" href="{% url 'boards:sticker-update' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
                         {% endif %}
                         <span class="label {{ sticker.label.css_class }}">{{ sticker.label.name|upper }}</span>
                     </div>
@@ -42,52 +44,40 @@
                     </div>
                 </div>
                 <div class="sticker-actions preview">
-                    <div>
-                        <h4>Comments</h4>
-                        {% if sticker.count_comments %}
-                            <div class="comment">
-                                <p class="well well-sm">Yolo lorem ipsum!</p>
-                                <ul class="list-inline author">
-                                    <li><h6>@author</h6></li>
-                                    <li>2015.01.01 8:26</li>
-                                </ul>
-                            </div>
-                        {% else %}
-                            <div class="well well-sm">This sticker has not comment yet. Please, use form below to <strong>add first one.</strong></div>
-                        {% endif %}
-                    </div>
+                    {% include 'boards/comments.html' %}
                 </div>
             {% endif %}
         </div>
     </div>
     <div class="col-md-3">.col-md-3</div>
 </div>
-
-{% if action %}
-<footer class="footer" style="background: {{ sticker.label.color }}">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            {% if action == 'DETAIL' %}
-                {% if short_urls_allowed %}
-                    <a class="btn btn-default" href="{% url 'boards-sticker-update' sticker.board.prefix sticker.sequence %}">
-                        Update
-                        <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
-                    </a>
-                {% else %}
-                    <a class="btn btn-default" href="{% url 'boards-sticker-update' username sticker.board.prefix sticker.sequence %}">
-                        Update
-                        <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
-                    </a>
-                {% endif %}
-            {% elif action == 'UPDATE' %}
-                <button form="sticker-form" class="btn btn-default">
-                    Save
-                    <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
-                </button>
-            {% endif %}
-        </div>
-    </div>
-</footer>
-{% endif %}
-
 {% endblock container %}
+
+{% block footer %}
+    {% if action %}
+    <footer class="footer" style="background: {{ sticker.label.color }}">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                {% if action == 'DETAIL' %}
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:sticker-update' sticker.board.prefix sticker.sequence %}">
+                            Update
+                            <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:sticker-update' username sticker.board.prefix sticker.sequence %}">
+                            Update
+                            <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
+                        </a>
+                    {% endif %}
+                {% elif action == 'UPDATE' %}
+                    <button form="sticker-form" class="btn btn-default">
+                        Save
+                        <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </footer>
+    {% endif %}
+{% endblock footer %}

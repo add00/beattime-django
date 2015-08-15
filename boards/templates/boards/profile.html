@@ -16,9 +16,9 @@
                 <div class="board-thumbnail">
                     <h4> {{ board.title|title }}</h4>
                     {% if short_urls_allowed %}
-                        <a class="circle img-responsive" href="{% url 'boards-board' board.sequence %}">#{{ board.sequence }}</a>
+                        <a class="circle img-responsive" href="{% url 'boards:board-detail' board.sequence %}">#{{ board.sequence }}</a>
                     {% else %}
-                        <a class="circle img-responsive" href="{% url 'boards-board' username board.sequence %}">#{{ board.sequence }}</a>
+                        <a class="circle img-responsive" href="{% url 'boards:board-detail' username board.sequence %}">#{{ board.sequence }}</a>
                     {% endif %}
                 </div>
             </div>

@@ -1,0 +1,56 @@
+{% load bootstrap %}
+
+<h4>Comments</h4>
+<div>
+    <form id="sticker-form" action="?" role="form" method="post">
+        <div class="form-group">
+            {% csrf_token %}
+            {{ comment_form|bootstrap }}
+            <button class="btn btn-default pull-right">Add</button>
+        </div>
+    </form>
+</div>
+<div>
+    {% if comments %}
+        {% for comment in page_obj %}
+        <div class="comment">
+            <p class="well well-sm">{{ comment.text }}</p>
+            <ul class="author">
+                <li><h6>@<strong>{{ comment.author }}</strong></h6></li>
+                <li>{{ comment.creation_date|date:"d E Y, H:i" }}</li>
+            </ul>
+        </div>
+        {% endfor %}
+        {% if paginator.num_pages > 1 %}
+            <nav>
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li>
+                            <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span aria-hidden="true">&laquo;</span></li>
+                    {% endif %}
+                    {% for number in paginator.num_pages|range %}
+                        <li {% if number == page_obj.number  %} class="active" {% endif %}>
+                            <a href="?page={{ number }}">{{ number }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li>
+                            <a href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span aria-hidden="true">&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="well well-sm">This {% if board %}board{% else %}sticker{% endif %} has not been commented yet. Please, use form above to <strong>add first one.</strong></div>
+    {% endif %}
+</div>

@@ -33,14 +33,14 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="{% url 'boards-profile' %}">
+                        <a class="navbar-brand" href="{% url 'boards:profile-detail' %}">
                             <span class="glyphicon glyphicon-dashboard"></span>
                             Beattime
                         </a>
                     </div>
                     <div id="navbar" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{% url 'boards-profile' %}">Dashboard</a></li>
+                            <li><a href="{% url 'boards:profile-detail' %}">Dashboard</a></li>
                             <li><a href="#">Settings</a></li>
                             <li><a href="#">Profile</a></li>
                             <li><a href="#">Help</a></li>
@@ -57,6 +57,8 @@
             {% block container %}
             {% endblock container %}
         </div>
+        {% block footer %}
+        {% endblock footer %}
         <script src="{% static 'beattime/jquery/jquery.min.js' %}"></script>
         <script src="{% static 'beattime/bootstrap/js/bootstrap.min.js' %}"></script>
     </body>

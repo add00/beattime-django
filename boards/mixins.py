@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.http import Http404
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.list import MultipleObjectMixin
 
-from boards.models import Sticker
+from boards.forms import CommentForm
+from boards.models import Board, Comment, Sticker
 from boards.utils import get_user
 
 
@@ -57,10 +60,32 @@ class ContextMixin(CommonInfoMixin):
         return context
 
 
-class StickerMixin(ContextMixin):
+class BoardMixin(ContextMixin, SingleObjectMixin):
+    """
+    Mixin class for Board model.
+    """
+    content_type = ContentType.objects.get_for_model(Board)
+    template_name = 'boards/board.html'
+
+    def get_object(self):
+        """
+        Return board basing od kwargs.
+        """
+        if not self.user.is_authenticated():
+            # Redirect to log in page.
+            raise Http404('Access denied')
+
+        return Board.objects.get(
+            desk__owner__user=self.user,
+            sequence=self.kwargs['board_sequence']
+        )
+
+
+class StickerMixin(ContextMixin, SingleObjectMixin):
     """
     Mixin class for Sticker model.
     """
+    content_type = ContentType.objects.get_for_model(Sticker)
     context_object_name = 'sticker'
     fields = ['caption', 'description', 'label']
     model = Sticker
@@ -74,7 +99,7 @@ class StickerMixin(ContextMixin):
             key: value for key, value in self.kwargs.iteritems() if value
         }
         return reverse(
-            'boards-sticker-detail', kwargs=kwargs
+            'boards:sticker-detail', kwargs=kwargs
         )
 
     def get_object(self):
@@ -91,3 +116,31 @@ class StickerMixin(ContextMixin):
             board__prefix=self.kwargs['prefix'],
             sequence=self.kwargs['sequence']
         )
+
+
+class CommentsMixin(MultipleObjectMixin):
+    paginate_by = 2
+
+    def get(self, request, *args, **kwargs):
+        """
+        Set view's object instance.
+        """
+        self.object = self.get_object()
+        return super(CommentsMixin, self).get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        """
+        Filter comments to list of sticker or board's ones.
+        """
+        return Comment.objects.filter(
+            content_type=self.content_type, object_id=self.object.pk
+        ).order_by('-creation_date')
+
+    def get_context_data(self, **kwargs):
+        """
+        Provide comments list and comment form to context data.
+        """
+        context = super(CommentsMixin, self).get_context_data(**kwargs)
+        context['comments'] = self.get_queryset()
+        context['comment_form'] = CommentForm
+        return context
