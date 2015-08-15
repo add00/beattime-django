@@ -101,3 +101,4 @@ TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
 
 
 add_to_builtins('boards.templatetags.active_page')
+add_to_builtins('boards.templatetags.range')

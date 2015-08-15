@@ -8,8 +8,8 @@ import boards.fields.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
         ('profiles', '0001_initial'),
+        ('contenttypes', '0002_remove_content_type_name'),
     ]
 
     operations = [
@@ -32,6 +32,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('creation_date', models.DateTimeField(auto_now_add=True, verbose_name='creation_date')),
                 ('modification_date', models.DateTimeField(auto_now=True, verbose_name='creation_date')),
+                ('text', models.TextField(verbose_name='text')),
                 ('object_id', models.PositiveIntegerField()),
                 ('author', models.ForeignKey(verbose_name='author', to='profiles.Profile')),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
