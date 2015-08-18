@@ -3,7 +3,10 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
+
+from profiles import FORBIDDEN_USERNAMES
 
 
 class Profile(models.Model):
@@ -16,6 +19,15 @@ class Profile(models.Model):
         'self', blank=True, verbose_name=_('friends')
     )
     user = models.OneToOneField(User, verbose_name=_('user'))
+
+    def clean(self):
+        """
+        Forbid creating users with usernames listed in `FORBIDDEN_USERNAMES`.
+        """
+        if FORBIDDEN_USERNAMES and self.user.username in FORBIDDEN_USERNAMES:
+            raise ValidationError(_(
+                'Username {} is not allowed'.format(self.user.username)
+            ))
 
     def save(self, *args, **kwargs):
         """

@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admindocs',
 
     'beattime',
     'boards',
@@ -88,6 +89,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
@@ -99,6 +102,10 @@ TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
 )
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SESSION_COOKIE_AGE = 60 * 5
+SESSION_SAVE_EVERY_REQUEST = True
 
 add_to_builtins('boards.templatetags.active_page')
 add_to_builtins('boards.templatetags.range')
