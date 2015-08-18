@@ -26,7 +26,6 @@ class CommentCreate(CommonInfoMixin, CreateView):
         """
         if not self.user.is_authenticated():
             raise Http404('Access denied')
-
         self.url_name = self.request.resolver_match.url_name
         if self.url_name == 'sticker-detail':
             return Sticker.objects.get(
@@ -63,6 +62,7 @@ class CommentCreate(CommonInfoMixin, CreateView):
 
 
 class ProfileDetail(ContextMixin, ListView):
+    action = DETAIL
     template_name = 'boards/profile.html'
     context_object_name = 'boards'
 

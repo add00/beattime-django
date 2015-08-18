@@ -19,7 +19,9 @@
                     <form id="sticker-form" action="?" role="form" method="post">
                         <div class="form-group">
                             {% csrf_token %}
-                            <h4>User data</h4> {{ form|bootstrap }}
+                            <h4>User data</h4>
+                            {{ form|bootstrap }}
+                            <button type="submit" class="pull-right btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </div>
