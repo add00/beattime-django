@@ -7,11 +7,11 @@ IN_REVIEW = 'REVIEW'
 DONE = 'DONE'
 BLOCKED = 'BLOCKED'
 TASK_STATUS = (
-    (OPEN[0], OPEN),
-    (IN_PROGRESS[0], IN_PROGRESS),
-    (IN_REVIEW[0], IN_REVIEW),
-    (DONE[0], DONE),
-    (BLOCKED[0], BLOCKED),
+    (OPEN, OPEN),
+    (IN_PROGRESS, IN_PROGRESS),
+    (IN_REVIEW, IN_REVIEW),
+    (DONE, DONE),
+    (BLOCKED, BLOCKED),
 )
 
 DETAIL = 'DETAIL'
@@ -25,4 +25,12 @@ ACTION = (
     (CREATE, CREATE),
     (LIST, LIST),
     (UPDATE, UPDATE),
+)
+
+CSS_CLASS = (
+    ('bg-todo', OPEN),
+    ('bg-inprogress', IN_PROGRESS),
+    ('bg-inreview', IN_REVIEW),
+    ('bg-done', DONE),
+    ('bg-blocked', BLOCKED)
 )

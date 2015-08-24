@@ -21,7 +21,6 @@
                             {% csrf_token %}
                             <h4>User data</h4>
                             {{ form|bootstrap }}
-                            <button type="submit" class="pull-right btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -34,7 +33,7 @@
                         {% else %}
                             <a class="sticker-number label bg-number preview" href="{% url 'boards:sticker-update' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
                         {% endif %}
-                        <span class="label {{ sticker.label.css_class }}">{{ sticker.label.name|upper }}</span>
+                        <span class="label {{ sticker.label.css_class }}">{{ sticker.label.status|upper }}</span>
                     </div>
                 </div>
                 <div class="sticker-content preview">
@@ -57,25 +56,68 @@
 
 {% block footer %}
     {% if action %}
-    <footer class="footer" style="background: {{ sticker.label.color }}">
+    <footer style="background: {{ sticker.label.color }}">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
                 {% if action == 'DETAIL' %}
                     {% if short_urls_allowed %}
+                        {% if sticker.sprint %}
+                            <a class="btn btn-default" href="{% url 'boards:sprint-detail' sticker.board.sequence sticker.sprint.number %}">
+                                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                Back to sprint #{{ sticker.sprint.number }}
+                            </a>
+                        {% else %}
+                            <a class="btn btn-default" href="{% url 'boards:board-detail' sticker.board.sequence %}">
+                                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                Back to board #{{ sticker.board.sequence }}
+                            </a>
+                        {% endif %}
                         <a class="btn btn-default" href="{% url 'boards:sticker-update' sticker.board.prefix sticker.sequence %}">
                             Update
                             <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
                         </a>
                     {% else %}
+                        {% if sticker.sprint %}
+                            <a class="btn btn-default" href="{% url 'boards:sprint-detail' username sticker.board.sequence sticker.sprint.number %}">
+                                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                Back to sprint #{{ sticker.sprint.number }}
+                            </a>
+                        {% else %}
+                            <a class="btn btn-default" href="{% url 'boards:board-detail' username sticker.board.sequence %}">
+                                <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                                Back to board #{{ sticker.board.sequence }}
+                            </a>
+                        {% endif %}
                         <a class="btn btn-default" href="{% url 'boards:sticker-update' username sticker.board.prefix sticker.sequence %}">
                             Update
                             <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
                         </a>
                     {% endif %}
                 {% elif action == 'UPDATE' %}
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:sticker-detail' prefix sequence %}">
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:sticker-detail' username prefix sequence %}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Cancel
+                        </a>
                     <button form="sticker-form" class="btn btn-default">
                         Save
                         <span class="sticker-number label bg-number preview {{ sticker.label.css_class }}">{{ sticker.number }}</span>
+                    </button>
+                {% elif action == 'CREATE' %}
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:board-detail' board_sequence %}">
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:board-detail' board_sequence %}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to board #{{ board_sequence }}
+                        </a>
+                    <button form="sticker-form" class="btn btn-default">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        Add sticker
                     </button>
                 {% endif %}
             </div>

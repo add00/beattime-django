@@ -1,0 +1,204 @@
+{% extends "boards/base.html" %}
+{% load bootstrap %}
+
+{% block nav %}
+    {{ block.super }}
+    {% if action == 'DETAIL' %}
+        <div class="labels container-fluid">
+            <div class="row">
+                <div id="nav-todo" class="bg-todo col-md-15 col-sm-3">
+                    <p>TO DO</p>
+                    {% if short_urls_allowed %}
+                        <a class="nav-action glyphicon glyphicon-plus" href="{% url 'boards:sticker-create' board_sequence %}"></a>
+                    {% else %}
+                        <a class="nav-action glyphicon glyphicon-plus" href="{% url 'boards:sticker-create' username board_sequence %}"></a>
+                    {% endif %}
+                </div>
+                <div id="nav-inprogress" class="bg-inprogress col-md-15 col-sm-3">
+                    <p>IN PROGRESS</p>
+                </div>
+                <div id="nav-inreview" class="bg-inreview col-md-15 col-sm-3">
+                    <p>IN REVIEW</p>
+                </div>
+                <div id="nav-done" class="bg-done col-md-15 col-sm-3">
+                    <p>DONE</p>
+                </div>
+                <div id="nav-blocked" class="bg-blocked col-md-15 col-sm-3">
+                    <p>BLOCKED</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock nav %}
+
+{% block container %}
+    {% if action == 'DETAIL' %}
+        <div class="row">
+            <div id="todo" class="col-md-15 col-sm-3">
+                {% if stickers.open %}
+                    {% for sticker in stickers.open %}
+                        {% include 'boards/stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-todo">
+                            <div class="sticker-empty">
+                                You have no sticker in <span class="label bg-todo">OPEN</span> state
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="inprogress" class="col-md-15 col-sm-3">
+                {% if stickers.in_progress %}
+                    {% for sticker in stickers.in_progress %}
+                        {% include 'boards/stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-inprogress">
+                            <div class="sticker-empty">
+                                No sticker <span class="label bg-inprogress">IN PROGRESS</span> right now
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="inreview" class="col-md-15 col-sm-3">
+                {% if stickers.review %}
+                    {% for sticker in stickers.review %}
+                        {% include 'boards/stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-inreview">
+                            <div class="sticker-empty">
+                                No sticker <span class="label bg-inreview">IN REVIEW</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="done" class="col-md-15 col-sm-3">
+                {% if stickers.done %}
+                    {% for sticker in stickers.done %}
+                        {% include 'boards/stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-done">
+                            <div class="sticker-empty">
+                                You have no sticker <span class="label bg-done">DONE</span> yet
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div id="done" class="col-md-15 col-sm-3">
+                {% if stickers.blocked %}
+                    {% for sticker in stickers.blocked %}
+                        {% include 'boards/stickers_column.html' %}
+                    {% endfor %}
+                {% else %}
+                    <div class="sticker">
+                        <div class="border bg-blocked">
+                            <div class="sticker-empty">
+                                You have no <span class="label bg-blocked">BLOCKED</span> sticker
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% elif action == 'CREATE' %}
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 login">
+                <div class="border">
+                    <form action="?next={{next}}" role="form" method="post">
+                        {% csrf_token %}
+                        {{ form|bootstrap }}
+                        <button type="submit" class="pull-right btn btn-primary">Create board</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-3">.col-md-3</div>
+            <div class="col-md-6 sticker preview">
+                <div class="border">
+                    <div class="sticker-actions preview">
+                        {% include 'boards/comments.html' %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">.col-md-3</div>
+        </div>
+    {% endif %}
+{% endblock container %}
+
+{% block footer %}
+    {% if action %}
+        <footer>
+        {% if action == 'DETAIL' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:board-detail' board_sequence %}">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to board #{{ board_sequence }}
+                        </a>
+                        <a class="btn btn-default" href="{% url 'boards:sticker-create' board_sequence sprint_number %}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sticker
+                        </a>
+                        <a class="btn btn-default" href="{% url 'boards:sprint-comments' board_sequence sprint_number %}">
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                            Comments {% if sprint.count_comments %}(<strong>{{ sprint.count_comments }}</strong>){% endif %}
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:board-detail' username board_sequence %}">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to board #{{ board_sequence }}
+                        </a>
+                        <a class="btn btn-default" href="{% url 'boards:sticker-create' username board_sequence sprint_number %}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sticker
+                        </a>
+                        <a class="btn btn-default" href="{% url 'boards:sprint-comments' username board_sequence sprint_number %}">
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                            Comments {% if sprint.count_comments %}(<strong>{{ sprint.count_comments }}</strong>){% endif %}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% elif action == 'CREATE' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:profile-detail' %}">
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:profile-detail' username %}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to profile page
+                        </a>
+                </div>
+            </div>
+        {% elif action == 'LIST' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:sprint-detail' board_sequence sprint_number %}">
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:sprint-detail' username board_sequence sprint_number %}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to sprint #{{ sprint_number }}
+                        </a>
+                </div>
+            </div>
+        {% endif %}
+        </footer>
+    {% endif %}
+{% endblock footer %}
