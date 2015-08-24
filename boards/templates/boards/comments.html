@@ -2,11 +2,14 @@
 
 <h4>Comments</h4>
 <div>
-    <form id="sticker-form" action="?" role="form" method="post">
+    <form id="comment-form" action="?" role="form" method="post">
         <div class="form-group">
             {% csrf_token %}
             {{ comment_form|bootstrap }}
-            <button class="btn btn-default pull-right">Add</button>
+            <button class="btn btn-default pull-right">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                Add comment
+            </button>
         </div>
     </form>
 </div>

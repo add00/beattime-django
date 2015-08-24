@@ -27,6 +27,10 @@ a, a:hover
     background-color: #4A70A0;
 }
 
+.bg-todo.label {
+    background-color: #5cb85c;
+}
+
 .bg-sticker-top {
     height: 5px;
 }
@@ -36,9 +40,17 @@ a, a:hover
     background-color: #337ab7;
 }
 
+.bg-inprogress.label {
+    background-color: #5bc0de;
+}
+
 .bg-inreview {
     color: #fff;
     background-color: #ff5b3e;
+}
+
+.bg-inreview.label {
+    background-color: #f0ad4e;
 }
 
 .bg-done {
@@ -46,9 +58,17 @@ a, a:hover
     background-color: #5cb85c;
 }
 
+.bg-done.label {
+    background-color: #d9534f;
+}
+
 .bg-blocked {
     color: #fff;
     background-color: #d9534f;
+}
+
+.bg-blocked.label {
+    background-color: #111;
 }
 
 .bg-number {
@@ -109,7 +129,7 @@ a, a:hover
 
 .sticker-header.preview {
     border-bottom: 1px solid #eee;
-    padding-right: 115px;
+    padding-right: 180px;
 }
 
 .sticker-content {
@@ -168,6 +188,10 @@ a, a:hover
 .sticker-label {
     position: absolute;
     top: 18px;
+    right: 0px;
+}
+
+.sticker-label.smaller {
     right: 15px;
 }
 
@@ -226,6 +250,10 @@ a, a:hover
     text-decoration: none;
 }
 
+.circle.done {
+    background: #5cb85c;
+}
+
 .board-thumbnail {
     margin:0 auto;
     width:70%;
@@ -273,9 +301,18 @@ footer {
    z-index: 10;
 }
 
-#sticker-form {
+footer.board {
+    height: 280px;
+}
+
+#comment-form {
     padding: 0;
     margin-bottom: 60px;
+}
+
+
+#sticker-form {
+    padding: 0;
 }
 
 /* OVERRIDDEN BOOTSTRAP CLASSES */
@@ -306,4 +343,40 @@ blockquote::after{
 
 .well {
     margin-bottom: 0;
+}
+
+.col-xs-15,
+.col-sm-15,
+.col-md-15,
+.col-lg-15 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.col-xs-15 {
+    width: 20%;
+    float: left;
+}
+
+@media (min-width: 768px) {
+.col-sm-15 {
+        width: 20%;
+        float: left;
+    }
+}
+
+@media (min-width: 992px) {
+    .col-md-15 {
+        width: 20%;
+        float: left;
+    }
+}
+
+@media (min-width: 1200px) {
+    .col-lg-15 {
+        width: 20%;
+        float: left;
+    }
 }

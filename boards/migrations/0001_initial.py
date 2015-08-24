@@ -57,8 +57,21 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('color', boards.fields.models.RGBField(verbose_name='color')),
-                ('css_class', models.CharField(max_length=100, verbose_name='css_class')),
-                ('name', models.CharField(max_length=100, verbose_name='name')),
+                ('css_class', models.CharField(max_length=100, verbose_name='css_class', choices=[('bg-todo', 'OPEN'), ('bg-inprogress', 'PROGRESS'), ('bg-inreview', 'REVIEW'), ('bg-done', 'DONE'), ('bg-blocked', 'BLOCKED')])),
+                ('status', models.CharField(max_length=1, verbose_name='status', choices=[('OPEN', 'OPEN'), ('PROGRESS', 'PROGRESS'), ('REVIEW', 'REVIEW'), ('DONE', 'DONE'), ('BLOCKED', 'BLOCKED')])),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Sprint',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('creation_date', models.DateTimeField(auto_now_add=True, verbose_name='creation_date')),
+                ('modification_date', models.DateTimeField(auto_now=True, verbose_name='creation_date')),
+                ('number', models.DecimalField(verbose_name='number', max_digits=5, decimal_places=2)),
+                ('start_date', models.DateField(verbose_name='start_date')),
+                ('end_date', models.DateField(verbose_name='end_date')),
+                ('author', models.ForeignKey(verbose_name='author', to='profiles.Profile')),
+                ('board', models.ForeignKey(verbose_name='board', to='boards.Board')),
             ],
         ),
         migrations.CreateModel(
@@ -70,10 +83,10 @@ class Migration(migrations.Migration):
                 ('caption', models.CharField(max_length=100, verbose_name='caption')),
                 ('description', models.TextField(verbose_name='description')),
                 ('sequence', models.PositiveIntegerField(verbose_name='sequence')),
-                ('status', models.CharField(max_length=1, verbose_name='status', choices=[('O', 'OPEN'), ('P', 'PROGRESS'), ('R', 'REVIEW'), ('D', 'DONE'), ('B', 'BLOCKED')])),
                 ('author', models.ForeignKey(verbose_name='author', to='profiles.Profile')),
                 ('board', models.ForeignKey(verbose_name='board', to='boards.Board')),
                 ('label', models.ForeignKey(verbose_name='label', to='boards.Label')),
+                ('sprint', models.ForeignKey(verbose_name='sprint', blank=True, to='boards.Sprint', null=True)),
             ],
         ),
         migrations.AddField(
@@ -84,6 +97,10 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='sticker',
             unique_together=set([('board', 'sequence')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='sprint',
+            unique_together=set([('board', 'number')]),
         ),
         migrations.AlterUniqueTogether(
             name='board',

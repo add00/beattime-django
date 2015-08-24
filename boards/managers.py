@@ -20,19 +20,19 @@ class StickersQuerySet(QuerySet):
     Custom queryset to get simple access to stickers with particular state.
     """
     def open(self):
-        return self.filter(status=OPEN[0])
+        return self.filter(label__status=OPEN)
 
     def in_progress(self):
-        return self.filter(status=IN_PROGRESS[0])
+        return self.filter(label__status=IN_PROGRESS)
 
     def review(self):
-        return self.filter(status=IN_REVIEW[0])
+        return self.filter(label__status=IN_REVIEW)
 
     def done(self):
-        return self.filter(status=DONE[0])
+        return self.filter(label__status=DONE)
 
     def blocked(self):
-        return self.filter(status=BLOCKED[0])
+        return self.filter(label__status=BLOCKED)
 
 
 class StickersManager(Manager):

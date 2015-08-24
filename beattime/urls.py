@@ -65,6 +65,6 @@ auth_patterns = patterns(
 urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('django.contrib.auth.urls')),
+    url(r'^', include(auth_patterns)),
     url(r'^', include('boards.urls', namespace='boards'))
 )

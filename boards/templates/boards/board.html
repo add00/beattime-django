@@ -1,40 +1,15 @@
 {% extends "boards/base.html" %}
-
-{% block nav %}
-    {{ block.super }}
-    {% if action == 'DETAIL' %}
-        <div class="labels container-fluid">
-            <div class="row">
-                <div id="nav-todo" class="bg-todo col-xs-6 col-sm-3">
-                    <p>TO DO</p>
-                    {% if short_urls_allowed %}
-                        <a class="nav-action glyphicon glyphicon-plus" href="{% url 'boards:sticker-create' board_sequence %}"></a>
-                    {% else %}
-                        <a class="nav-action glyphicon glyphicon-plus" href="{% url 'boards:sticker-create' username board_sequence %}"></a>
-                    {% endif %}
-                </div>
-                <div id="nav-inprogress" class="bg-inprogress col-xs-6 col-sm-3">
-                    <p>IN PROGRESS</p>
-                </div>
-                <div id="nav-inreview" class="bg-inreview col-xs-6 col-sm-3">
-                    <p>IN REVIEW</p>
-                </div>
-                <div id="nav-done" class="bg-done col-xs-6 col-sm-3">
-                    <p>DONE</p>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-{% endblock nav %}
+{% load bootstrap %}
 
 {% block container %}
     {% if action == 'DETAIL' %}
+        <h4>Backlog</h4>
         <div class="row">
-            <div id="todo" class="col-xs-6 col-sm-3">
-                {% if stickers.open %}
-                    {% for sticker in stickers.open %}
+            {% if stickers %}
+                {% for sticker in stickers %}
+                    <div class="col-md-15 col-sm-3">
                         <div class="sticker">
-                            <div class="border bg-todo">
+                            <div class="border {{ sticker.label.css_class }}">
                                 <div class="sticker-header">
                                     <h5>
                                         {% if short_urls_allowed %}
@@ -45,8 +20,8 @@
                                                 {{ sticker.caption }}
                                             </a>
                                     </h5>
-                                    <div class="sticker-label">
-                                        <span class="label label-success">OPEN</span>
+                                    <div class="sticker-label smaller">
+                                        <span class="label {{ sticker.label.css_class }}">{{ sticker.label.status }}</span>
                                     </div>
                                 </div>
                                 <div class="sticker-content">
@@ -85,154 +60,107 @@
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="sticker">
-                        <div class="border bg-todo">
-                            <div class="sticker-empty">
-                                You have no sticker in <span class="label label-success">OPEN</span> state
-                            </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="sticker">
+                    <div class="border col-md-6 col-md-offset-3">
+                        <div class="sticker-empty">
+                            You have no sticker created. Let's use action buttons below.
                         </div>
                     </div>
-                {% endif %}
-            </div>
-            <div id="inprogress" class="col-xs-6 col-sm-3">
-                {% if stickers.in_progress %}
-                    {% for sticker in stickers.in_progress %}
+                </div>
+            {% endif %}
+        </div>
+        {% if sprints %}
+            {% for sprint in sprints %}
+                <h4>
+                    {% if short_urls_allowed %}
+                        <a href="{% url 'boards:sprint-detail' board.sequence sprint.number %}">Sprint {{ sprint.number }}</a>
+                    {% else %}
+                        <a href="{% url 'boards:sprint-detail' username board.sequence sprint.number %}">Sprint {{ sprint.number }}</a>
+                    {% endif %}
+                </h4>
+                <div class="row">
+                    {% if sprint.sticker_set.exists %}
+                        {% for sticker in sprint.sticker_set.all %}
+                            <div class="col-md-15 col-sm-3">
+                                <div class="sticker">
+                                    <div class="border {{ sticker.label.css_class }}">
+                                        <div class="sticker-header">
+                                            <h5>
+                                                {% if short_urls_allowed %}
+                                                    <a href="{% url 'boards:sticker-detail' sticker.board.prefix sticker.sequence %}">
+                                                {% else %}
+                                                    <a href="{% url 'boards:sticker-detail' username sticker.board.prefix sticker.sequence %}">
+                                                {% endif %}
+                                                        {{ sticker.caption }}
+                                                    </a>
+                                            </h5>
+                                            <div class="sticker-label smaller">
+                                                <span class="label {{ sticker.label.css_class }}">{{ sticker.label.status }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="sticker-content">
+                                            <div class="sticker-description">
+                                                <p>
+                                                    {{ sticker.description|truncatechars:100 }}
+                                                </p>
+                                                <a href="#"></a>
+                                            </div>
+                                        </div>
+                                        <div class="sticker-actions">
+                                            <div>
+                                                {% if short_urls_allowed %}
+                                                    <a class="sticker-number label bg-number" href="{% url 'boards:sticker-detail' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                                {% else %}
+                                                    <a class="sticker-number label bg-number" href="{% url 'boards:sticker-detail' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
+                                                {% endif %}
+                                                {% if sticker.count_comments %}
+                                                    {% if short_urls_allowed %}
+                                                        <a href="{% url 'boards:sticker-detail' sticker.board.prefix sticker.sequence %}">
+                                                    {% else %}
+                                                        <a href="{% url 'boards:sticker-detail' username sticker.board.prefix sticker.sequence %}">
+                                                    {% endif %}
+                                                            <span class="glyphicon glyphicon-comment"></span> {{ sticker.count_comments }}
+                                                        </a>
+                                                {% else %}
+                                                    {% if short_urls_allowed %}
+                                                        <a href="{% url 'boards:sticker-detail' sticker.board.prefix sticker.sequence %}">
+                                                    {% else %}
+                                                        <a href="{% url 'boards:sticker-detail' username sticker.board.prefix sticker.sequence %}">
+                                                    {% endif %}
+                                                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Add a first comment
+                                                        </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
                         <div class="sticker">
-                            <div class="border bg-inprogress">
-                                <div class="sticker-header">
-                                    <h5>{{ sticker.caption }}</h5>
-                                    <div class="sticker-label">
-                                        <span class="label label-info">IN PROGRESS</span>
-                                    </div>
-                                </div>
-                                <div class="sticker-content">
-                                    <div class="sticker-description">
-                                        <p>
-                                            {{ sticker.description|truncatechars:100 }}
-                                        </p>
-                                        <a href="#"></a>
-                                    </div>
-                                </div>
-                                <div class="sticker-actions">
-                                    <div>
-                                        {% if short_urls_allowed %}
-                                            <a class="sticker-number label bg-number" href="{% url 'boards:sticker-detail' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
-                                        {% else %}
-                                            <a class="sticker-number label bg-number" href="{% url 'boards:sticker-detail' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
-                                        {% endif %}
-                                        {% if sticker.count_comments %}
-                                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ sticker.count_comments }}
-                                        {% else %}
-                                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Add a first comment
-                                        {% endif %}
-                                    </div>
+                            <div class="border col-md-6 col-md-offset-3">
+                                <div class="sticker-empty">
+                                    You have no sticker created in sprint #{{ sprint.number }}. Let's use action buttons below.
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="sticker">
-                        <div class="border bg-inprogress">
-                            <div class="sticker-empty">
-                                No sticker <span class="label label-info">IN PROGRESS</span> right now
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-            <div id="inreview" class="col-xs-6 col-sm-3">
-                {% if stickers.review %}
-                    {% for sticker in stickers.review %}
-                        <div class="sticker">
-                            <div class="border bg-inreview">
-                                <div class="sticker-header">
-                                    <h5>{{ sticker.caption }}</h5>
-                                    <div class="sticker-label">
-                                        <span class="label label-warning">IN REVIEW</span>
-                                    </div>
-                                </div>
-                                <div class="sticker-content">
-                                    <div class="sticker-description">
-                                        <p>
-                                            {{ sticker.description|truncatechars:100 }}
-                                        </p>
-                                        <a href="#"></a>
-                                    </div>
-                                </div>
-                                <div class="sticker-actions">
-                                    <div>
-                                        {% if short_urls_allowed %}
-                                            <a class="sticker-number label bg-number" href="{% url 'boards:sticker-detail' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
-                                        {% else %}
-                                            <a class="sticker-number label bg-number" href="{% url 'boards:sticker-detail' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
-                                        {% endif %}
-                                        {% if sticker.count_comments %}
-                                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ sticker.count_comments }}
-                                        {% else %}
-                                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Add a first comment
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="sticker">
-                        <div class="border bg-inreview">
-                            <div class="sticker-empty">
-                                No sticker <span class="label label-warning">IN REVIEW</span>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-            <div id="done" class="col-xs-6 col-sm-3">
-                {% if stickers.done %}
-                    {% for sticker in stickers.done %}
-                        <div class="sticker">
-                            <div class="border bg-done">
-                                <div class="sticker-header">
-                                    <h5>{{ sticker.caption }}</h5>
-                                    <div class="sticker-label">
-                                        <span class="label label-danger">DONE</span>
-                                    </div>
-                                </div>
-                                <div class="sticker-content">
-                                    <div class="sticker-description">
-                                        <p>
-                                            {{ sticker.description|truncatechars:100 }}
-                                        </p>
-                                        <a href="#"></a>
-                                    </div>
-                                </div>
-                                <div class="sticker-actions">
-                                    <div>
-                                        {% if short_urls_allowed %}
-                                            <a class="sticker-number label bg-number" href="{% url 'boards:sticker-detail' sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
-                                        {% else %}
-                                            <a class="sticker-number label bg-number" href="{% url 'boards:sticker-detail' username sticker.board.prefix sticker.sequence %}">{{ sticker.number }}</a>
-                                        {% endif %}
-                                        {% if sticker.count_comments %}
-                                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{ sticker.count_comments }}
-                                        {% else %}
-                                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Add a first comment
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="sticker">
-                        <div class="border bg-done">
-                            <div class="sticker-empty">
-                                You have no sticker <span class="label label-danger">DONE</span> yet
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% elif action == 'CREATE' %}
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 login">
+                <div class="border">
+                    <form action="?next={{next}}" role="form" method="post">
+                        {% csrf_token %}
+                        {{ form|bootstrap }}
+                        <button type="submit" class="pull-right btn btn-primary">Create board</button>
+                    </form>
+                </div>
             </div>
         </div>
     {% else %}
@@ -252,11 +180,41 @@
 
 {% block footer %}
     {% if action %}
-    <footer class="footer">
+        <footer {% if action == 'DETAIL' and sprints %}class="board"{% endif %}>
         {% if action == 'DETAIL' %}
+            {% if sprints %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-15 col-sm-3">
+                        <h4>Sprints</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for sprint in sprints %}
+                        <div class="col-xs-3 col-sm-2 placeholder">
+                            <div class="board-thumbnail">
+                                {% if short_urls_allowed %}
+                                    <a class="circle img-responsive {% if is_current %}done{% endif %}" href="{% url 'boards:sprint-detail' board.sequence sprint.number %}">#{{ sprint.number }}</a>
+                                {% else %}
+                                    <a class="circle img-responsive {% if is_current %}done{% endif %}" href="{% url 'boards:sprint-detail' username board.sequence sprint.number %}">#{{ sprint.number }}</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
                     {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:profile-detail' %}">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to profile page
+                        </a>
+                        <a class="btn btn-default" href="{% url 'boards:sprint-create' board_sequence %}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sprint
+                        </a>
                         <a class="btn btn-default" href="{% url 'boards:sticker-create' board_sequence %}">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             Create new sticker
@@ -266,6 +224,14 @@
                             Comments {% if board.count_comments %}(<strong>{{ board.count_comments }}</strong>){% endif %}
                         </a>
                     {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:profile-detail' username %}">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to profile page
+                        </a>
+                        <a class="btn btn-default" href="{% url 'boards:sprint-create' username board_sequence %}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new sprint
+                        </a>
                         <a class="btn btn-default" href="{% url 'boards:sticker-create' username board_sequence %}">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             Create new sticker
@@ -275,6 +241,19 @@
                             Comments {% if board.count_comments %}(<strong>{{ board.count_comments }}</strong>){% endif %}
                         </a>
                     {% endif %}
+                </div>
+            </div>
+        {% elif action == 'CREATE' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:profile-detail' %}">
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:profile-detail' username %}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to profile page
+                        </a>
                 </div>
             </div>
         {% else %}
@@ -291,6 +270,6 @@
                 </div>
             </div>
         {% endif %}
-    </footer>
+        </footer>
     {% endif %}
 {% endblock footer %}

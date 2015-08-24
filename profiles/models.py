@@ -37,7 +37,7 @@ class Profile(models.Model):
             self.display_name = self.user.username
         super(Profile, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.display_name
 
 
@@ -51,7 +51,7 @@ class ActivityType(models.Model):
     )
     name = models.CharField(_('name'), max_length=100)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -66,5 +66,5 @@ class Activities(models.Model):
     )
     who = models.ForeignKey(Profile, verbose_name=_('who'))
 
-    def __unicode__(self):
+    def __str__(self):
         return '@{} - {} [{}]'.format(self. who, self.what, self.when)

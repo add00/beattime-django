@@ -31,3 +31,40 @@
     {% endif %}
 </div>
 {% endblock container %}
+
+{% block footer %}
+    <!-- {% if action %} -->
+    <footer>
+        {% if action == 'DETAIL' %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:board-create' %}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new board
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:board-create' username %}">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            Create new board
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {% if short_urls_allowed %}
+                        <a class="btn btn-default" href="{% url 'boards:board-detail' board.sequence %}">
+                    {% else %}
+                        <a class="btn btn-default" href="{% url 'boards:board-detail' username board.sequence %}">
+                    {% endif %}
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                            Back to board #{{ board.sequence }}
+                        </a>
+                </div>
+            </div>
+        {% endif %}
+    </footer>
+    <!-- {% endif %} -->
+{% endblock footer %}

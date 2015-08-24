@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 
-from boards.models import Board, Comment, Desk, Label, Sticker
+from boards.models import Board, Comment, Desk, Label, Sprint, Sticker
 
 
 class StickerInline(admin.StackedInline):
@@ -27,6 +27,10 @@ class DeskAdmin(admin.ModelAdmin):
     inlines = [BoardInline]
 
 
+class SprintAdmin(admin.ModelAdmin):
+    inlines = [StickerInline, CommentInline]
+
+
 class StickerAdmin(admin.ModelAdmin):
     inlines = [CommentInline]
 
@@ -34,4 +38,5 @@ class StickerAdmin(admin.ModelAdmin):
 admin.site.register(Board, BoardAdmin)
 admin.site.register(Desk, DeskAdmin)
 admin.site.register(Label)
+admin.site.register(Sprint, SprintAdmin)
 admin.site.register(Sticker, StickerAdmin)

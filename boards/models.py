@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
-from boards import TASK_STATUS
+from boards import CSS_CLASS, TASK_STATUS
 from boards.fields.models import RGBField
 from boards.managers import CommentAuthorsManager, StickersManager
 
 
 COMMENT_LOCATION_LIMIT = (
-    models.Q(app_label='boards', model='sticker') |
-    models.Q(app_label='boards', model='board')
+    models.Q(app_label='boards', model='board') |
+    models.Q(app_label='boards', model='sprint') |
+    models.Q(app_label='boards', model='sticker')
 )
 
 
@@ -36,7 +39,7 @@ class DeskBoardMixin(models.Model):
         abstract = True
 
 
-class BoardStickerMixin(models.Model):
+class CommentInfoMixin(models.Model):
     """
     Common methods and attributes of Board and Sticker models.
     @desc: model mixin.
@@ -65,11 +68,11 @@ class CommonInfo(models.Model):
     author = models.ForeignKey('profiles.Profile', verbose_name=_('author'))
     # @desc: using of auto_now_add.
     creation_date = models.DateTimeField(
-        _('creation_date'), auto_now_add=True, editable=False
+        _('creation date'), auto_now_add=True, editable=False
     )
     # @desc: using of auto_now.
     modification_date = models.DateTimeField(
-        _('creation_date'), auto_now=True, editable=False
+        _('creation date'), auto_now=True, editable=False
     )
 
     class Meta:
@@ -92,7 +95,7 @@ class Comment(CommonInfo):
     objects = models.Manager()
     authors_objects = CommentAuthorsManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return '@{} [{}]'.format(self.author, self.creation_date)
 
 
@@ -102,11 +105,13 @@ class Label(models.Model):
     """
     # @desc: custom field.
     color = RGBField(_('color'))
-    css_class = models.CharField(_('css_class'), max_length=100)
-    name = models.CharField(_('name'), max_length=100)
+    css_class = models.CharField(
+        _('css class'), choices=CSS_CLASS, max_length=100
+    )
+    status = models.CharField(_('status'), choices=TASK_STATUS, max_length=1)
 
-    def __unicode__(self):
-        return '{} [{}]'.format(self.name, self.color)
+    def __str__(self):
+        return '{}'.format(self.status, self.color)
 
 
 class Desk(DeskBoardMixin, models.Model):
@@ -117,7 +122,7 @@ class Desk(DeskBoardMixin, models.Model):
     owner = models.OneToOneField('profiles.Profile', verbose_name=_('owner'))
     desk_slug = models.SlugField(max_length=5, unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.desk_slug
 
     @property
@@ -128,7 +133,7 @@ class Desk(DeskBoardMixin, models.Model):
         return self.owner.board_set.all()
 
 
-class Board(BoardStickerMixin, DeskBoardMixin, CommonInfo):
+class Board(CommentInfoMixin, DeskBoardMixin, CommonInfo):
     """
     Stickers container model.
     """
@@ -137,11 +142,21 @@ class Board(BoardStickerMixin, DeskBoardMixin, CommonInfo):
     sequence = models.PositiveIntegerField(_('sequence'))
     prefix = models.SlugField(_('prefix'), max_length=5)
     sticker_sequence = models.PositiveIntegerField(
-        _('sticker_sequence'), default=1
+        _('sticker sequence'), default=1
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} [{}]'.format(self.title, self.desk)
+
+    @property
+    def get_next_sequence(self):
+        """
+        Return next board sequence
+        """
+        last_sequence = Board.objects.filter(desk=self.desk).aggregate(
+            models.Max('sequence')
+        ).get('sequence__max') or 0
+        return last_sequence + 1
 
     @property
     def owner_username(self):
@@ -157,6 +172,9 @@ class Board(BoardStickerMixin, DeskBoardMixin, CommonInfo):
         """
         if not self.prefix:
             self.prefix = self.desk.desk_slug
+
+        if not self.pk:
+            self.sequence = self.get_next_sequence
         super(Board, self).save(*args, **kwargs)
 
     class Meta:
@@ -164,7 +182,39 @@ class Board(BoardStickerMixin, DeskBoardMixin, CommonInfo):
         unique_together = ('desk', 'sequence')
 
 
-class Sticker(BoardStickerMixin, CommonInfo):
+class Sprint(CommentInfoMixin, CommonInfo):
+    """
+    Sprint for creating next phases of learning.
+    """
+    board = models.ForeignKey(Board, verbose_name=_('board'))
+    number = models.DecimalField(_('number'), decimal_places=2, max_digits=5)
+    start_date = models.DateField(_('start date'))
+    end_date = models.DateField(_('end date'))
+
+    def __str__(self):
+        return 'SPRINT#{}/BOARD#{} [{}]'.format(
+            self.number, self.board.sequence, self.board.desk.owner
+        )
+
+    @property
+    def time_to_finish(self):
+        """
+        Return time that left to the end of a sprint.
+        """
+        return self.end_date - datetime.now()
+
+    @property
+    def is_current(self):
+        """
+        Return if sprint is in progress.
+        """
+        return self.end_date < datetime.now()
+
+    class Meta:
+        unique_together = ('board', 'number')
+
+
+class Sticker(CommentInfoMixin, CommonInfo):
     """
     Sticker with task description.
     """
@@ -175,14 +225,24 @@ class Sticker(BoardStickerMixin, CommonInfo):
     label = models.ForeignKey(Label, verbose_name=_('label'))
     sequence = models.PositiveIntegerField(_('sequence'))
     # @desc: choices field.
-    status = models.CharField(_('status'), choices=TASK_STATUS, max_length=1)
+    sprint = models.ForeignKey(
+        Sprint, blank=True, null=True, verbose_name=_('sprint')
+    )
+    # status = models.CharField(_('status'), choices=TASK_STATUS, max_length=1)
 
     objects = StickersManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return '#{}-{} {} [{}]'.format(
-            self.board.prefix, self.sequence, self.caption, self.label.name
+            self.board.prefix, self.sequence, self.caption, self.label.status
         )
+
+    @property
+    def css_class(self):
+        """
+        Return css class name basing on a sticker's status.
+        """
+        return '{}-{}'.format(self.board.prefix, self.sequence)
 
     @property
     def number(self):
