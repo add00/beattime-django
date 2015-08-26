@@ -1,0 +1,43 @@
+{% extends "boards/base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+
+{% block container %}
+    {% if action == 'LIST' %}
+        <div class="row placeholders">
+            {% if friends %}
+                {% for friend in friends %}
+                    <div class="col-xs-3 col-sm-2 placeholder">
+                        <div class="avatar friend">
+                            <a href="{% url 'boards:profile-detail' friend.user.username %}">
+                                {% if friend.avatar %}
+                                    <img src="{{ friend.avatar.url }}" alt="{{ friend|title }} photo">
+                                {% else %}
+                                    <img src="{% static 'profiles/img/avatars/001.jpg' %}" alt="{{ friend|title }} photo">
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div>
+                            <h4><a href="{% url 'boards:profile-detail' friend.user.username %}">{{ friend }}</a></h4>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-content">
+                    <h4>You no friend. Change it using action buttons below.</h4>
+                    <a class="btn btn-primary btn-lg" href="{% url 'boards:board-create' %}" role="button">Add board</a>
+                </div>
+            {% endif %}
+        </div>
+    {% elif action == 'UPDATE' or action == 'CREATE' %}
+        <div class="col-md-6 col-md-offset-3">
+            <form id="profile-form" action="?" enctype="multipart/form-data" role="form" method="post">
+                <div class="form-group">
+                    {% csrf_token %}
+                    <h4>User data</h4>
+                    {{ form|bootstrap }}
+                </div>
+            </form>
+        </div>
+    {% endif %}
+{% endblock container %}

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.views.generic.detail import SingleObjectMixin
@@ -10,6 +11,7 @@ from boards import CREATE
 from boards.forms import CommentForm, SprintForm
 from boards.models import Board, Comment, Sprint, Sticker
 from boards.utils import get_user
+from profiles.models import Profile
 
 
 class CommonInfoMixin(object):
@@ -23,6 +25,10 @@ class CommonInfoMixin(object):
         """
         # @desc: extra view instance variable using request.
         self.user = get_user(request, self.kwargs)
+        if not self.user == request.user:
+            user_profile = Profile.objects.get(user=request.user)
+            if not user_profile.friends.filter(user=self.user).exists():
+                raise PermissionDenied
         return super(CommonInfoMixin, self).dispatch(request, *args, **kwargs)
 
 
@@ -52,14 +58,39 @@ class ContextMixin(CommonInfoMixin):
         context['action'] = self.action
         context['short_urls_allowed'] = self._get_short_urls_allowed()
         context['username'] = get_user(self.request, self.kwargs).username
-        context['aa'] = ['open']
         kwargs = {
             key: value for key, value in self.kwargs.iteritems()
             if key not in context
         }
         context.update(**kwargs)
-
         return context
+
+
+class ProfileMixin(ContextMixin, SingleObjectMixin):
+    """
+    Mixin class for Profile model.
+    """
+    context_object_name = 'profile'
+    model = Profile
+    template_name = 'boards/profile.html'
+
+    def get_success_url(self):
+        """
+        After creation or update, back to a profile page.
+        """
+        kwargs = {
+            key: value for key, value in self.kwargs.iteritems() if value
+        }
+        return reverse('boards:profile-detail', kwargs=kwargs)
+
+    def get_object(self):
+        """
+        Return object of Profile class basing on current user.
+        """
+        if not self.user.is_authenticated():
+            raise Http404('Access denied')
+
+        return Profile.objects.get(user=self.user)
 
 
 class BoardMixin(ContextMixin, SingleObjectMixin):

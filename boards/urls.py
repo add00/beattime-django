@@ -80,12 +80,44 @@ sticker_patterns = patterns(
     ),
 )
 
+profile_patterns = patterns(
+    '',
+    url(
+        r'^$',
+        login_required(views.ProfileDetail.as_view()),
+        name='profile-detail'
+    ),
+    url(
+        r'^new/$',
+        views.ProfileCreate.as_view(),
+        name='profile-create'
+    ),
+    url(
+        r'^update/$',
+        login_required(views.ProfileUpdate.as_view()),
+        name='profile-update'
+    ),
+    url(
+        r'^friends/$',
+        login_required(views.FriendsList.as_view()),
+        name='friends-list'
+    ),
+)
+
+api_patterns = patterns(
+    '',
+    url(
+        r'^stickers/$',
+        login_required(views.StickerAPI.as_view()),
+        name='api-stickers'
+    ),
+)
+
 urlpatterns = patterns(
     '',
     url(
-        r'^(?:user/(?P<username>[a-z0-9_-]+)/)?$',
-        login_required(views.ProfileDetail.as_view()),
-        name='profile-detail'
+        r'^(?:user/(?P<username>[a-z0-9_-]+)/)?',
+        include(profile_patterns)
     ),
     url(
         r'^(?:user/(?P<username>[a-z0-9_-]+)/)?board/',
@@ -94,5 +126,9 @@ urlpatterns = patterns(
     url(
         r'^(?:user/(?P<username>[a-z0-9_-]+)/)?sticker/',
         include(sticker_patterns)
+    ),
+    url(
+        r'^api/',
+        include(api_patterns)
     ),
 )

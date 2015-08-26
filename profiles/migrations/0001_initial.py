@@ -31,7 +31,9 @@ class Migration(migrations.Migration):
             name='Profile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('display_name', models.CharField(max_length=100, verbose_name='display_name')),
+                ('avatar', models.ImageField(upload_to='avatars', null=True, verbose_name='avatar', blank=True)),
+                ('display_name', models.CharField(max_length=100, verbose_name='display name')),
+                ('motivation_quote', models.CharField(max_length=255, verbose_name='motivation quote')),
                 ('friends', models.ManyToManyField(related_name='friends_rel_+', verbose_name='friends', to='profiles.Profile', blank=True)),
                 ('user', models.OneToOneField(verbose_name='user', to=settings.AUTH_USER_MODEL)),
             ],

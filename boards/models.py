@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from datetime import datetime
 
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
@@ -12,12 +14,25 @@ from boards import CSS_CLASS, TASK_STATUS
 from boards.fields.models import RGBField
 from boards.managers import CommentAuthorsManager, StickersManager
 
+from profiles.models import Profile
+
 
 COMMENT_LOCATION_LIMIT = (
     models.Q(app_label='boards', model='board') |
     models.Q(app_label='boards', model='sprint') |
     models.Q(app_label='boards', model='sticker')
 )
+
+
+@receiver(post_save, sender=Profile)
+def new_profile_handler(sender, instance, **kwargs):
+    """
+    Catch post_save signal of `Profile` model to create a `Desk` for new user.
+    """
+    if not Desk.objects.filter(owner=instance).exists():
+        Desk.objects.create(
+            owner=instance, desk_slug=instance.user.username[-5:]
+        )
 
 
 class DeskBoardMixin(models.Model):

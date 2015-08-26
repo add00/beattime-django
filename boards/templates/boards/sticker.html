@@ -11,7 +11,19 @@
 
 {% block container %}
 <div class="row">
-    <div class="col-md-3">.col-md-3</div>
+    <div class="col-md-3">
+        {% if action == 'DETAIL' %}
+            <div class="border">
+                <div class="sticker-info">
+                    <ul>
+                        <li><strong>Created by:</strong> {{ sticker.author }}</li>
+                        <li><strong>Created date:</strong> {{ sticker.creation_date }}</li>
+                        <li><strong>Last update date:</strong> {{ sticker.modification_date }}</li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
     <div class="col-md-6 sticker preview">
         <div class="border">
             {% if form %}
@@ -50,7 +62,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="col-md-3">.col-md-3</div>
+    <div class="col-md-3"></div>
 </div>
 {% endblock container %}
 

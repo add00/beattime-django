@@ -13,11 +13,13 @@ class Profile(models.Model):
     """
     Users' model.
     """
-    display_name = models.CharField(_('display_name'), max_length=100)
+    avatar = models.ImageField(_('avatar'), blank=True, upload_to='avatars')
+    display_name = models.CharField(_('display name'), max_length=100)
     # @desc: self and a ManyToMany relation.
     friends = models.ManyToManyField(
         'self', blank=True, verbose_name=_('friends')
     )
+    motivation_quote = models.CharField(_('motivation quote'), max_length=255)
     user = models.OneToOneField(User, verbose_name=_('user'))
 
     def clean(self):
