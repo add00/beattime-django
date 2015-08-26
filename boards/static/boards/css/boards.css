@@ -170,6 +170,16 @@ a, a:hover
     top: 2px;
 }
 
+.sticker-info {
+    padding-top: 5px;
+    padding-left: 15px;
+}
+
+.sticker-info ul {
+    padding: 0;
+    list-style-type: none;
+}
+
 .author {
     text-align: right;
     margin-bottom: 0;
@@ -221,6 +231,14 @@ a, a:hover
     margin: 0 auto;
     overflow: hidden;
     width: 300px;
+}
+
+.avatar.friend {
+    border-radius: 50%;
+    height: 200px;
+    margin: 0 auto;
+    overflow: hidden;
+    width: 200px;
 }
 
 .avatar img {
@@ -303,6 +321,12 @@ footer {
 
 footer.board {
     height: 280px;
+}
+
+.error {
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
 }
 
 #comment-form {

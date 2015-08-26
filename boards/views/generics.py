@@ -4,17 +4,18 @@ from __future__ import unicode_literals
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.forms.widgets import HiddenInput
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView
 
 from boards import DETAIL, CREATE, LIST, OPEN, UPDATE
 from boards.forms import CommentForm
 from boards.mixins import (
-    BoardMixin, ContextMixin, CommentsMixin, CommonInfoMixin, SprintMixin,
+    BoardMixin, CommentsMixin, CommonInfoMixin, ProfileMixin, SprintMixin,
     StickerMixin,
 )
 from boards.models import Board, Comment, Desk, Label, Sprint, Sticker
+from profiles.forms import ProfileCreationForm, ProfileUpdateForm
 from profiles.models import Profile
 
 
@@ -70,17 +71,73 @@ class CommentCreate(CommonInfoMixin, CreateView):
         return super(CommentCreate, self).form_valid(form)
 
 
-class ProfileDetail(ContextMixin, ListView):
+class ProfileDetail(ProfileMixin, ListView):
     action = DETAIL
-    template_name = 'boards/profile.html'
-    context_object_name = 'boards'
+
+    def get_context_data(self, **kwargs):
+        """
+        Provide profile data.
+        """
+        context = super(ProfileDetail, self).get_context_data(**kwargs)
+        context['boards'] = self.get_queryset()
+
+        return context
 
     def get_queryset(self):
         """
-        Return only boards from desk of user that sent a request.
+        Return only boards from desk of user from url.
         """
-        if self.user.is_authenticated():
-            return Board.objects.filter(desk__owner__user=self.user)
+        self.object = self.get_object()
+        return self.object.desk.board_set.all()
+
+
+class ProfileUpdate(ProfileMixin, UpdateView):
+    action = UPDATE
+    form_class = ProfileUpdateForm
+
+    def get_form_kwargs(self):
+        """
+        Append extra kwargs to form for validation purposes.
+        """
+        kwargs = super(ProfileUpdate, self).get_form_kwargs()
+        self.profile = self.get_object()
+        extra_kwargs = {'profile': self.profile}
+        kwargs.update(extra_kwargs)
+        return kwargs
+
+
+class ProfileCreate(ProfileMixin, CreateView):
+    action = CREATE
+    form_class = ProfileCreationForm
+
+    def get(self, request, *args, **kwargs):
+        """
+        Allow create new profile only not logged in users.
+        """
+        if request.user.is_authenticated():
+            return HttpResponseRedirect('/')
+        return super(ProfileCreate, self).get(request, *args, **kwargs)
+
+
+class FriendsList(ProfileMixin, ListView):
+    action = LIST
+    template_name = 'boards/friends.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Provide friends to template data.
+        """
+        context = super(FriendsList, self).get_context_data(**kwargs)
+        context['friends'] = self.get_queryset()
+
+        return context
+
+    def get_queryset(self):
+        """
+        Return friends of user.
+        """
+        self.object = self.get_object()
+        return self.object.friends.all().exclude(user=self.object.user)
 
 
 class BoardDetail(BoardMixin, ListView):
