@@ -74,7 +74,7 @@ class CommentInfoMixin(models.Model):
         abstract = True
 
 
-class CommonInfo(models.Model):
+class CommonInfoMixin(models.Model):
     """
     Abstract class for models' common information.
     @desc: abstract model class.
@@ -94,7 +94,7 @@ class CommonInfo(models.Model):
         abstract = True
 
 
-class Comment(CommonInfo):
+class Comment(CommonInfoMixin):
     """
     There is a possibility to comment Stickers or Boards. This model store
     all comments.
@@ -148,7 +148,7 @@ class Desk(DeskBoardMixin, models.Model):
         return self.owner.board_set.all()
 
 
-class Board(CommentInfoMixin, DeskBoardMixin, CommonInfo):
+class Board(CommentInfoMixin, DeskBoardMixin, CommonInfoMixin):
     """
     Stickers container model.
     """
@@ -197,7 +197,7 @@ class Board(CommentInfoMixin, DeskBoardMixin, CommonInfo):
         unique_together = ('desk', 'sequence')
 
 
-class Sprint(CommentInfoMixin, CommonInfo):
+class Sprint(CommentInfoMixin, CommonInfoMixin):
     """
     Sprint for creating next phases of learning.
     """
@@ -229,7 +229,7 @@ class Sprint(CommentInfoMixin, CommonInfo):
         unique_together = ('board', 'number')
 
 
-class Sticker(CommentInfoMixin, CommonInfo):
+class Sticker(CommentInfoMixin, CommonInfoMixin):
     """
     Sticker with task description.
     """
