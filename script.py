@@ -17,7 +17,7 @@ IN_REVIEW = 'REVIEW'
 DONE = 'DONE'
 BLOCKED = 'BLOCKED'
 
-STATUSES = [OPEN, IN_PROGRESS, IN_REVIEW, DONE] # , BLOCKED]
+STATUSES = [OPEN, IN_PROGRESS, IN_REVIEW, DONE]  # , BLOCKED]
 
 CSS_CLASS = (
     ('bg-todo', OPEN),
@@ -53,15 +53,19 @@ def process(author, desk):
                 label=Label.objects.get(status=random.choice(STATUSES)),
                 sequence=seq
             )
+
+
 def create_labels():
     for css_class, status in CSS_CLASS:
-        Label.objects.get_or_create(color='#eee', css_class=css_class, status=status)
+        Label.objects.get_or_create(
+            color='#eee', css_class=css_class, status=status
+        )
 
 
 create_labels()
 
-p1, d1 = prepare_user(1) # Profile 1
+p1, d1 = prepare_user(1)  # Profile 1
 process(p1, d1)
 
-p2, d2 = prepare_user(2) # Profile 2
+p2, d2 = prepare_user(2)  # Profile 2
 process(p2, d2)

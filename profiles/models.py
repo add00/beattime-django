@@ -13,7 +13,9 @@ class Profile(models.Model):
     """
     Users' model.
     """
-    avatar = models.ImageField(_('avatar'), blank=True, upload_to='avatars')
+    avatar = models.ImageField(
+        _('avatar'), blank=True, null=True, upload_to='avatars'
+    )
     display_name = models.CharField(_('display name'), max_length=100)
     # @desc: self and a ManyToMany relation.
     friends = models.ManyToManyField(
